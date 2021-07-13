@@ -30,7 +30,6 @@ public class Pawn extends ChessPiece {
             //Can move 2 Steps only if it is untouched
             if (isUntouched()) {  moveForward(chessBoard, row+2, column); } // 2 Steps
 
-            //Pawn Promotion
 
         }
 
@@ -54,7 +53,7 @@ public class Pawn extends ChessPiece {
 
         // Base Case: If the row/column is out of bounds or there is anyPiece in front of it.
         if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null) { return; }
+                chessBoard.getBoard()[row][column].getColor() != Color.NULL  ) { return; }
 
 
         else {
@@ -68,7 +67,7 @@ public class Pawn extends ChessPiece {
         // Base Case: if there is no opposite color pieces on the adjacent side or if there are no pieces at all
         // We can't capture any, so we simply return. (Also considering out of bounds).
         if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] == null ||
+                chessBoard.getBoard()[row][column].getColor() == Color.NULL   ||
                 chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
 
         else {
@@ -92,7 +91,7 @@ public class Pawn extends ChessPiece {
     // Recording of games
 
 
-    private void whitePawnPromotion (ChessBoard chessBoard, int row, int column ) {
+    public void whitePawnPromotion (ChessBoard chessBoard, int row, int column ) {
 
         ChessPiece promotedPawn = null;
         Scanner whitePawnScan = new Scanner(System.in);
@@ -101,12 +100,12 @@ public class Pawn extends ChessPiece {
 
         while (isInvalidInput) {
 
-            System.out.println("Promote the pawn to:\n1.Queen 2.Knight 3.Rook 4.Bishop");
-            System.out.println("Enter the number: ");
+            System.out.println("\n\nPromote the pawn to:\n1.Queen 2.Knight 3.Rook 4.Bishop");
+            System.out.println("\nEnter the number: ");
             pawnSelection = whitePawnScan.nextInt();
 
             if (pawnSelection > 0 && pawnSelection < 5) { isInvalidInput = false; break; }
-            else {  System.out.println("Please enter the number from the available options"); continue; }
+            else {  System.out.println("Please enter the number from the available options, select a number from (1 - 4)"); continue; }
 
         }
 
@@ -118,10 +117,10 @@ public class Pawn extends ChessPiece {
 
         }
 
-        chessBoard.getBoard()[row][column] = promotedPawn;
+        chessBoard.updateBoardPiece(promotedPawn, row, column);
     }
 
-    private void blackPawnPromotion (ChessBoard chessBoard, int row, int column ) {
+    public void blackPawnPromotion (ChessBoard chessBoard,  int row, int column ) {
 
         ChessPiece promotedPawn = null;
         Scanner blackPawnScan = new Scanner(System.in);
@@ -130,8 +129,8 @@ public class Pawn extends ChessPiece {
 
         while (isInvalidInput) {
 
-            System.out.println("Promote the pawn to:\n1.Queen 2.Knight 3.Rook 4.Bishop");
-            System.out.println("Enter the number: ");
+            System.out.println("\n\nPromote the pawn to:\n1.Queen 2.Knight 3.Rook 4.Bishop");
+            System.out.println("\nEnter the number: ");
             pawnSelection = blackPawnScan.nextInt();
 
             if (pawnSelection > 0 && pawnSelection < 5) { isInvalidInput = false; break; }
@@ -146,7 +145,7 @@ public class Pawn extends ChessPiece {
             case 4: promotedPawn = new Bishop(ChessPiece.Color.BLACK,"B_B", 7, column); break;
         }
 
-        chessBoard.getBoard()[row][column] = promotedPawn;
+        chessBoard.updateBoardPiece(promotedPawn, row, column);
     }
 
 

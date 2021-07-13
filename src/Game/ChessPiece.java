@@ -6,7 +6,7 @@ import java.util.List;
 public abstract class ChessPiece {
 
     public enum Color {
-        BLACK, WHITE
+        BLACK, WHITE, NULL
     }
 
     private boolean isUntouched = true;
@@ -22,6 +22,7 @@ public abstract class ChessPiece {
     // Constructor
     public ChessPiece (Color color, String nameOnBoard, int row, int column) {
         this.nameOnBoard = nameOnBoard;
+        this.onTheBoard = true;
         this.color = color;
         this.currentPosition[0] = row;
         this.currentPosition[1] = column;
@@ -51,9 +52,14 @@ public abstract class ChessPiece {
         // b) - List of Pieces it can capture.
    }
 
+   public void whitePawnPromotion (ChessBoard chessBoard, int row, int column) {
+
+   }
+
+   public void blackPawnPromotion (ChessBoard chessBoard, int row, int column) {
 
 
-
+   }
 
 
 
@@ -90,5 +96,7 @@ public abstract class ChessPiece {
 
     public boolean isUntouched() { return isUntouched; }
 
-    public void setUntouched(boolean untouched) { isUntouched = untouched; }
+    public void setUntouchedToFalse () { this.isUntouched = false; }
+
+    public void clearList ( ) { this.move.clear(); this.moveAndCapture.clear(); }
 }

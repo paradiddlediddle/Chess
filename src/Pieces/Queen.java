@@ -28,11 +28,12 @@ public class Queen extends ChessPiece {
     private void right (ChessBoard chessBoard, int row, int column) {
 
         // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (row < 0 || row > 7 || column < 0 || column > 7  ||
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -46,11 +47,12 @@ public class Queen extends ChessPiece {
     private void left (ChessBoard chessBoard, int row, int column) {
 
         // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (row < 0 || row > 7 || column < 0 || column > 7  ||
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -64,11 +66,12 @@ public class Queen extends ChessPiece {
     private void top (ChessBoard chessBoard, int row, int column) {
 
         // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (row < 0 || row > 7 || column < 0 || column > 7  ||
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -83,11 +86,12 @@ public class Queen extends ChessPiece {
 
 
         // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (row < 0 || row > 7 || column < 0 || column > 7  ||
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -103,11 +107,12 @@ public class Queen extends ChessPiece {
 
 
         // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (row < 0 || row > 7 || column < 0 || column > 7  ||
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -124,10 +129,11 @@ public class Queen extends ChessPiece {
 
         // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
         if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -144,10 +150,11 @@ public class Queen extends ChessPiece {
 
         // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
         if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }
@@ -163,10 +170,11 @@ public class Queen extends ChessPiece {
 
         // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
         if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
 
         // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column] != null && chessBoard.getBoard()[row][column].isPieceBlack() != isPieceBlack()){
+        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
+                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
             return;
         }

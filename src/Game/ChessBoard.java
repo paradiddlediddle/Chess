@@ -15,6 +15,7 @@ public class ChessBoard {
         // When a chess board is created the pieces automatically needs to be arranged
         arrangePieces();
         displayChessboard();
+
     }
 
 
@@ -45,7 +46,7 @@ public class ChessBoard {
     private final Rook whiteRook2 = new Rook(ChessPiece.Color.WHITE,"W_R",7, 7);
     private final Bishop whiteBishop1 = new Bishop(ChessPiece.Color.WHITE,"W_B",7,2);
     private final Bishop whiteBishop2 = new Bishop(ChessPiece.Color.WHITE,"W_B",7, 5);
-    private final Knight whiteKnight1 = new Knight(ChessPiece.Color.WHITE,"W_N",3,3);
+    private final Knight whiteKnight1 = new Knight(ChessPiece.Color.WHITE,"W_N",7,1);
     private final Knight whiteKnight2 = new Knight(ChessPiece.Color.WHITE,"W_N",7,6);
     private final Pawn whitePawn1 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,0 );
     private final Pawn whitePawn2 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,1 );
@@ -56,12 +57,24 @@ public class ChessBoard {
     private final Pawn whitePawn7 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,6 );
     private final Pawn whitePawn8 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,7 );
 
+    //Creates and adds the null pieces into the List
+    private void setNullPieces () {
+        for (int i=2; i<6; i++) {
+            for (int j=0; j<8; j++){
+                allPieces.add(new NullPiece(ChessPiece.Color.NULL, "   ", i, j ));
+            }
+        }
+    }
+
+
     // Getters and Setters
 
 
     public ChessPiece[][] getBoard() { return board;}
 
-    public void setBoard(ChessPiece[][] board) { this.board = board; }
+    public void updateBoardPiece (ChessPiece chessPiece, int row,  int column) { this.board[row][column] = chessPiece; }
+
+    public void updateBoardPieceToNull(int row, int column) { this.board[row][column] =  new NullPiece(ChessPiece.Color.NULL, "   ", row, column );   }
 
     public List<ChessPiece> getAllPieces() { return allPieces; }
 
@@ -92,15 +105,18 @@ public class ChessBoard {
 
         // Adding pieces to the list
         addPiecesToList();
+        setNullPieces();
 
         //Iterates through the list and gets the current position and
         for (int i=0; i < allPieces.size(); i++) {
           int row =  allPieces.get(i).getCurrentPosition()[0];
           int column = allPieces.get(i).getCurrentPosition()[1];
 
+
           board[row][column] = allPieces.get(i);
         }
-
+        board[5][3] = blackKing;
+        blackKing.setCurrentPosition(new int[] {5,3});
     }
 
 
