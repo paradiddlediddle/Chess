@@ -1,7 +1,9 @@
 package Game;
 
 
-import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 public class Game {
@@ -11,36 +13,39 @@ public class Game {
         BLACK_WIN, WHITE_WIN, DRAW, BLACK_FORFEIT, WHITE_FORFEIT
     }
 
-
+    private Formatter recordingFile;
     private Status gameResult;
     private boolean isGameActive = true;
     private ChessBoard chessBoard = new ChessBoard();
     private Player player1 = new Player(false);
     private Player player2 = new Player(true);
+    private List<String> playerMoves = new ArrayList<>();
 
 
     public Game () {
         while (isGameActive) {
 
           if (isGameActive) playerMove(player1, chessBoard);
+          if (isGameActive) playerMove(player2, chessBoard);
 
-           if (isGameActive) playerMove(player2, chessBoard);
+          if (!isGameActive()) {
+              // Whatever needs to happen at the end of the game
+              exportData();
+          }
 
         }
 
     }
-    
+
 
 public void playerMove (Player player, ChessBoard chessBoard) {
 
-        // Even after the game is forfeited, "generateMovesAndGetInput" & "movePiece" will be called
-        // Need to find a way to exit the game without any error
-
+    int[] newPosition = null;
+    String playerMove = null;
     ChessPiece userSelectedPiece = choosePiece(player, chessBoard);
-    int[] newPosition = generateMovesAndGetInput(userSelectedPiece);
-    Move playerMove = movePiece(chessBoard, userSelectedPiece, newPosition);
-    // Add the players move to the player's move list
-    player.addPlayerMoves(playerMove);
+    // If statements are added so that the game doesn't stop when the game is exited.
+   if (isGameActive()){ newPosition = generateMovesAndGetInput(userSelectedPiece); }
+   if (isGameActive()){ movePiece(chessBoard, userSelectedPiece, newPosition);}
 }
 
 
@@ -171,7 +176,7 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
         if (selectedPiece.isPieceBlack()) {playerNumber = 2;  }
         else { playerNumber = 1; }
 
-        System.out.print("\n\nPlayer-"+ playerNumber +"\nPlease enter your move: ");
+        System.out.print("\n\nPlayer-"+ playerNumber +"\nPiece Selected: "+ selectedPiece.getTypeOfPiece()+"\nPlease enter your move: ");
         
         userInput = selectedMove.nextLine();
         userInput.trim().toLowerCase();
@@ -245,7 +250,7 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
 }
 
 
-private Move movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] targetPosition ) {
+private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] targetPosition ) {
 
     //(move piece needs to handle pawn promotion not king castling)
 
@@ -255,7 +260,7 @@ private Move movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
     int newRow = targetPosition[0];
     int newColumn = targetPosition[1];
 
-    Move move = new Move(selectedPiece, targetPosition);
+    addMoveToList(selectedPiece, targetPosition);
 
     // Update winning condition
     if (chessBoard.getBoard()[newRow][newColumn].getNameOnBoard().equalsIgnoreCase("W_K")){
@@ -306,9 +311,80 @@ private Move movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
 
 
 
-    return move;
-
 }
+
+// Convert move into String 
+    
+    private void addMoveToList (ChessPiece selectedPiece, int[] targetPosition) {
+
+        int playerNumber;
+       String oldRow = Integer.toString( (8- selectedPiece.getCurrentPosition()[0]) );
+       String oldColumn = "" + (char) (97 + selectedPiece.getCurrentPosition()[1]);
+       String oldPosition  = oldRow + oldColumn;
+       String newRow = Integer.toString( (8- targetPosition[0]) );
+       String newColumn = "" + (char) (97 + targetPosition[1]);
+       String newPosition  = newRow + newColumn;
+        
+        
+        if (selectedPiece.getColor() == ChessPiece.Color.BLACK) { playerNumber = 2; }
+        else playerNumber = 1;
+        
+        String moveInString = "Player-"+playerNumber+": "+ selectedPiece.getNameOnBoard()+" moved from "+oldPosition+" to "+ newPosition+".";
+        addPlayerMove(moveInString);
+    }
+
+
+
+
+
+    // Export data
+
+    private void exportData () {
+
+        DateTimeFormatter dateTimeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+        LocalDateTime now  = LocalDateTime.now();
+
+        String uniqueID = dateTimeStamp.format(now).replaceAll(" ", "");
+
+        //Open File
+        try{ recordingFile = new Formatter("GameRecording"+ uniqueID +".txt"); }
+        catch (Exception exception ){ System.out.println(exception); }
+
+        //Create File
+
+        for (int i=0; i<getPlayerMoves().size(); i++) {
+            recordingFile.format("%s", getPlayerMoves().get(i) + " ");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Close File
+        recordingFile.close();
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Getters and Setters
 
@@ -347,5 +423,13 @@ private Move movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
 
     public void setGameResult(Status gameResult) {
         this.gameResult = gameResult;
+    }
+
+    public List<String> getPlayerMoves() {
+        return playerMoves;
+    }
+
+    public void addPlayerMove(String move) {
+        playerMoves.add(move);
     }
 }

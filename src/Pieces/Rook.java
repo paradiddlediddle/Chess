@@ -7,6 +7,7 @@ public class Rook extends ChessPiece {
 
     public Rook(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("Rook");
     }
 
     @Override

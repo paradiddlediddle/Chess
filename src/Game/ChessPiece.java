@@ -8,7 +8,7 @@ public abstract class ChessPiece {
     public enum Color {
         BLACK, WHITE, NULL
     }
-
+    private String typeOfPiece;
     private boolean isUntouched = true;
     private String nameOnBoard;
     private Color color;
@@ -99,4 +99,8 @@ public abstract class ChessPiece {
     public void setUntouchedToFalse () { this.isUntouched = false; }
 
     public void clearList ( ) { this.move.clear(); this.moveAndCapture.clear(); }
+
+    public String getTypeOfPiece() { return typeOfPiece; }
+
+    public void setTypeOfPiece(String typeOfPiece) { this.typeOfPiece = typeOfPiece; }
 }

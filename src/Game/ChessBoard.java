@@ -115,8 +115,7 @@ public class ChessBoard {
 
           board[row][column] = allPieces.get(i);
         }
-        board[5][3] = blackKing;
-        blackKing.setCurrentPosition(new int[] {5,3});
+
     }
 
 

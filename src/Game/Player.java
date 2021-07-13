@@ -1,12 +1,8 @@
 package Game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player {
 
     private boolean isBlack;
-    private List<Move> playerMoves = new ArrayList<>();
     private int playerNumber;
 
 
@@ -20,10 +16,6 @@ public class Player {
     public boolean isBlack() { return isBlack; }
 
     public void setBlack(boolean black) { isBlack = black; }
-
-    public List<Move> getPlayerMoves() { return playerMoves; }
-
-    public void addPlayerMoves(Move move) { this.playerMoves.add(move); }
 
     public int getPlayerNumber() { return playerNumber; }
 

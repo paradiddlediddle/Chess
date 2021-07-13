@@ -7,6 +7,7 @@ public class Queen extends ChessPiece {
 
     public Queen(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("Queen");
     }
 
     @Override

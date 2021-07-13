@@ -11,6 +11,7 @@ public class Pawn extends ChessPiece {
 
     public Pawn(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("Pawn");
     }
 
 

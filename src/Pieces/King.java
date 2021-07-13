@@ -7,6 +7,7 @@ public class King extends ChessPiece {
 
     public King(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("King");
     }
 
     @Override

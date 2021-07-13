@@ -8,6 +8,7 @@ public class Bishop extends ChessPiece {
 
     public Bishop(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("Bishop");
     }
 
 
@@ -99,8 +100,6 @@ public class Bishop extends ChessPiece {
             bottomRightDiagonal(chessBoard, row+1, column+1);
         }
     }
-
-
 
 
 

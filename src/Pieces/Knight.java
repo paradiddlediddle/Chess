@@ -7,6 +7,7 @@ public class Knight extends ChessPiece {
 
     public Knight(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
+        super.setTypeOfPiece("Knight");
     }
 
     @Override
