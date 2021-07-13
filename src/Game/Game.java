@@ -10,7 +10,7 @@ public class Game {
 
 
     public enum Status {
-        BLACK_WIN, WHITE_WIN, DRAW, BLACK_FORFEIT, WHITE_FORFEIT
+        BLACK_WIN, WHITE_WIN, STALE_MATE, BLACK_FORFEIT, WHITE_FORFEIT
     }
 
     private Formatter recordingFile;
@@ -29,7 +29,6 @@ public class Game {
           if (isGameActive) playerMove(player2, chessBoard);
 
           if (!isGameActive()) {
-              // Whatever needs to happen at the end of the game
               exportData();
           }
 
@@ -73,16 +72,18 @@ private ChessPiece choosePiece (Player player, ChessBoard chessBoard) {
         if (userPieceSelection.equalsIgnoreCase("exit")) {
             setGameActive(false);
             if (player.isBlack()) { setGameResult(Status.BLACK_FORFEIT);
-                System.out.println("White wins"); }
+                System.out.println("White wins");
+                addPlayerMove("White wins by forfeit!");
+            }
             else { setGameResult(Status.WHITE_FORFEIT);
                 System.out.println("Black wins");
+                addPlayerMove("Black wins by forfeit!");
             }
            break;
         }
 
-
         // The user has to select a piece within the board
-        if (!(userPieceSelection.charAt(0) >= 97 && userPieceSelection.charAt(0) <= 104) ||
+        if ( userPieceSelection.length() == 0 || !(userPieceSelection.charAt(0) >= 97 && userPieceSelection.charAt(0) <= 104) ||
                 !(userPieceSelection.charAt(1) >= 49 && userPieceSelection.charAt(1) <= 56) ||
                 !(userPieceSelection.length() == 2) ) {
             System.out.println("Please select a spot within the board.\nColumn range: a - h\nRow range 1 - 7\n");
@@ -191,17 +192,19 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
         if (userInput.equalsIgnoreCase("exit")) {
             setGameActive(false);
             if (selectedPiece.isPieceBlack() ) { setGameResult(Status.BLACK_FORFEIT);
-                System.out.println("White wins");
+                System.out.println("White wins by forfeit!");
+                addPlayerMove("White wins by forfeit");
             }
             else { setGameResult(Status.WHITE_FORFEIT);
-                System.out.println("Black wins");
+                System.out.println("Black wins by forfeit!");
+                addPlayerMove("Black wins by forfeit");
             }
             break;
         }
 
 
         // The user has to select a piece within the board
-        if (!(userInput.charAt(0) >= 97 && userInput.charAt(0) <= 104) ||
+        if (userInput.length() == 0 || !(userInput.charAt(0) >= 97 && userInput.charAt(0) <= 104) ||
                 !(userInput.charAt(1) >= 49 && userInput.charAt(1) <= 56) ||
                 !(userInput.length() == 2) ) {
             System.out.println("Please select a spot within the board.\nColumn range: a - h\nRow range 1 - 7");
@@ -266,12 +269,14 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
     if (chessBoard.getBoard()[newRow][newColumn].getNameOnBoard().equalsIgnoreCase("W_K")){
         setGameResult(Status.BLACK_WIN);
         setGameActive(false);
-        System.out.println("Black wins");
+        System.out.println("Check Mate!  Black wins");
+        addPlayerMove("Check Mate! Black wins");
     }
     else if (chessBoard.getBoard()[newRow][newColumn].getNameOnBoard().equalsIgnoreCase("B_K")){
         setGameResult(Status.WHITE_WIN);
         setGameActive(false);
-        System.out.println("White wins");
+        System.out.println("Check Mate! White wins");
+        addPlayerMove("Check Mate! White wins");
     }
 
     //MOVE
@@ -320,16 +325,16 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         int playerNumber;
        String oldRow = Integer.toString( (8- selectedPiece.getCurrentPosition()[0]) );
        String oldColumn = "" + (char) (97 + selectedPiece.getCurrentPosition()[1]);
-       String oldPosition  = oldRow + oldColumn;
+       String oldPosition  = oldColumn + oldRow;
        String newRow = Integer.toString( (8- targetPosition[0]) );
        String newColumn = "" + (char) (97 + targetPosition[1]);
-       String newPosition  = newRow + newColumn;
+       String newPosition  = newColumn + newRow;
         
         
         if (selectedPiece.getColor() == ChessPiece.Color.BLACK) { playerNumber = 2; }
         else playerNumber = 1;
         
-        String moveInString = "Player-"+playerNumber+": "+ selectedPiece.getNameOnBoard()+" moved from "+oldPosition+" to "+ newPosition+".";
+        String moveInString = "Player-"+playerNumber+" moved "+ selectedPiece.getTypeOfPiece()+" from "+oldPosition+" to "+ newPosition;
         addPlayerMove(moveInString);
     }
 
@@ -344,7 +349,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         DateTimeFormatter dateTimeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         LocalDateTime now  = LocalDateTime.now();
 
-        String uniqueID = dateTimeStamp.format(now).replaceAll(" ", "");
+        String uniqueID = dateTimeStamp.format(now);
 
         //Open File
         try{ recordingFile = new Formatter("GameRecording"+ uniqueID +".txt"); }
@@ -353,35 +358,29 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         //Create File
 
         for (int i=0; i<getPlayerMoves().size(); i++) {
-            recordingFile.format("%s", getPlayerMoves().get(i) + " ");
+            recordingFile.format("%s %d %s %n", "Move", i ,": " + getPlayerMoves().get(i) + " ");
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
         //Close File
         recordingFile.close();
 
-
     }
 
 
+    private void checkForStaleMate () {
+
+        
+
+        // Generate the kings total moves, a6 b5
+        // Generate the moves for all the opposite colored, !null pieces
+
+        //If the kings' move and the opposite colored pieces moves match, remove the move from kings list of moves
+
+        // If king has no moves, it is a stale mate. (Actually none of the pieces kings side should be able to move)
+        // If king can generate moves but after subtracting has no moves, then it is a stale mate
 
 
-
-
-
-
-
+    }
 
 
 
