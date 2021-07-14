@@ -14,12 +14,12 @@ public class Game {
     }
 
     private Formatter recordingFile;
-    private Status gameResult;
-    private boolean isGameActive = true;
+    private static Status gameResult;
+    private static boolean isGameActive = true;
     private ChessBoard chessBoard = new ChessBoard();
     private Player player1 = new Player(false);
     private Player player2 = new Player(true);
-    private List<String> playerMoves = new ArrayList<>();
+    private static List<String> playerMoves = new ArrayList<>();
 
 
     public Game () {
@@ -83,9 +83,8 @@ private ChessPiece choosePiece (Player player, ChessBoard chessBoard) {
         }
 
         // The user has to select a piece within the board
-        if ( userPieceSelection.length() == 0 || !(userPieceSelection.charAt(0) >= 97 && userPieceSelection.charAt(0) <= 104) ||
-                !(userPieceSelection.charAt(1) >= 49 && userPieceSelection.charAt(1) <= 56) ||
-                !(userPieceSelection.length() == 2) ) {
+        if (userPieceSelection.length() != 2 || !(userPieceSelection.charAt(0) >= 97 && userPieceSelection.charAt(0) <= 104) ||
+                !(userPieceSelection.charAt(1) >= 49 && userPieceSelection.charAt(1) <= 56)) {
             System.out.println("Please select a spot within the board.\nColumn range: a - h\nRow range 1 - 7\n");
             continue;
         }
@@ -204,9 +203,8 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
 
 
         // The user has to select a piece within the board
-        if (userInput.length() == 0 || !(userInput.charAt(0) >= 97 && userInput.charAt(0) <= 104) ||
-                !(userInput.charAt(1) >= 49 && userInput.charAt(1) <= 56) ||
-                !(userInput.length() == 2) ) {
+        if ( !(userInput.length() == 2) || !(userInput.charAt(0) >= 97 && userInput.charAt(0) <= 104) ||
+                !(userInput.charAt(1) >= 49 && userInput.charAt(1) <= 56) ) {
             System.out.println("Please select a spot within the board.\nColumn range: a - h\nRow range 1 - 7");
             continue;
         }
@@ -279,9 +277,38 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         addPlayerMove("Check Mate! White wins");
     }
 
-    //MOVE
+    //1.CASTLING
+    if (selectedPiece.canCastle() && newColumn == 2 || selectedPiece.canCastle() && newColumn == 6 ) {
+
+        //King Moved
+        selectedPiece.setUntouchedToFalse(); // King is moved
+        selectedPiece.setCanCastle(false); // can't castle set to false to prevent doing it again
+        chessBoard.updateBoardPiece(selectedPiece, newRow, newColumn); // Update the current position of the piece to its new position
+        chessBoard.updateBoardPieceToNull(oldRow, oldColumn);// Update the old position to null
+        selectedPiece.clearList();
+
+        //Rook Moved
+
+        //Queen Side
+        if (selectedPiece.canCastle() && newColumn == 2){
+            ChessPiece rook = chessBoard.getBoard()[0][0]; // Get rook piece
+            chessBoard.updateBoardPiece(rook, 0, 3); // move rook
+            chessBoard.updateBoardPieceToNull(0,0); // update rooks old position to null
+        }
+        // King Side
+        else {
+            ChessPiece rook = chessBoard.getBoard()[0][7]; // Get rook piece
+            chessBoard.updateBoardPiece(rook, 0, 5); // move rook
+            chessBoard.updateBoardPieceToNull(0,7); // update rooks old position to null
+        }
+
+    }
+
+
+
+    //2.MOVE
     //If the target Position is empty
-    if (chessBoard.getBoard()[newRow][newColumn].getColor() == ChessPiece.Color.NULL) {
+    else if (chessBoard.getBoard()[newRow][newColumn].getColor() == ChessPiece.Color.NULL) {
 
         selectedPiece.setUntouchedToFalse();
         chessBoard.updateBoardPiece(selectedPiece, newRow, newColumn); // Update the board pieces to these values
@@ -290,7 +317,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         selectedPiece.clearList();
     }
 
-    //CAPTURE
+    //3.CAPTURE
     // If the target Position has a piece which needs to be taken down
     else {
         // setting the value of the piece to not be on board and making the target spot null.
@@ -369,7 +396,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
 
     private void checkForStaleMate () {
 
-        
+
 
         // Generate the kings total moves, a6 b5
         // Generate the moves for all the opposite colored, !null pieces
@@ -388,9 +415,9 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
 // Getters and Setters
 
 
-    public boolean isGameActive() { return isGameActive; }
+    public static boolean isGameActive() { return isGameActive; }
 
-    public void setGameActive(boolean gameActive) { isGameActive = gameActive; }
+    public static void setGameActive(boolean gameActive) { isGameActive = gameActive; }
 
     public ChessBoard getChessBoard() {
         return chessBoard;
@@ -416,19 +443,21 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         this.player2 = player2;
     }
 
-    public Status getGameResult() {
+    public static Status getGameResult() {
         return gameResult;
     }
 
-    public void setGameResult(Status gameResult) {
-        this.gameResult = gameResult;
+    public static void setGameResult(Status gameResult) {
+        Game.gameResult = gameResult;
     }
 
-    public List<String> getPlayerMoves() {
+    public static List<String> getPlayerMoves() {
         return playerMoves;
     }
 
-    public void addPlayerMove(String move) {
+    public static void addPlayerMove(String move) {
         playerMoves.add(move);
     }
+
+
 }

@@ -14,6 +14,7 @@ public abstract class ChessPiece {
     private Color color;
     private boolean pieceIsBlack;
     private boolean onTheBoard;
+    private boolean canCastle = false;
     private int [] currentPosition = new int[2];
     // move and moveAndCapture will contain a list of possible moves that can be performed by the piece
     private List<int[]> move = new ArrayList<>();
@@ -103,4 +104,8 @@ public abstract class ChessPiece {
     public String getTypeOfPiece() { return typeOfPiece; }
 
     public void setTypeOfPiece(String typeOfPiece) { this.typeOfPiece = typeOfPiece; }
+
+    public boolean canCastle() { return canCastle; }
+
+    public void setCanCastle(boolean canCastle) { this.canCastle = canCastle; }
 }
