@@ -115,14 +115,14 @@ public class ChessBoard {
 
           board[row][column] = allPieces.get(i);
         }
-        board[2][0] = blackKing;
-        blackKing.setCurrentPosition(new int[] {2,0} );
+//         board[2][0] = blackKing;
+//         blackKing.setCurrentPosition(new int[] {2,0} );
 
-        board[5][0] = whiteRook1;
-        whiteRook1.setCurrentPosition(new int[] {5,0} );
+//         board[5][0] = whiteRook1;
+//         whiteRook1.setCurrentPosition(new int[] {5,0} );
 
-        board[2][5] = whiteRook1;
-        whiteRook1.setCurrentPosition(new int[] {2,5} );
+//         board[2][5] = whiteRook1;
+//         whiteRook1.setCurrentPosition(new int[] {2,5} );
 
 //        board[5][3] = whiteBishop1;
 //        whiteBishop1.setCurrentPosition(new int[] {5,3} );
