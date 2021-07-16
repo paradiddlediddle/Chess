@@ -57,9 +57,10 @@ public class ChessBoard {
     private final Pawn whitePawn7 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,6 );
     private final Pawn whitePawn8 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,7 );
 
+
     //Creates and adds the null pieces into the List
     private void setNullPieces () {
-        for (int i=2; i<6; i++) {
+        for (int i=2; i<8; i++) {
             for (int j=0; j<8; j++){
                 allPieces.add(new NullPiece(ChessPiece.Color.NULL, "   ", i, j ));
             }
@@ -90,7 +91,7 @@ public class ChessBoard {
         allPieces.add(blackBishop1);allPieces.add(blackBishop2);allPieces.add(darkKnight1);allPieces.add(darkKnight2);
         allPieces.add(blackPawn1);allPieces.add(blackPawn2);allPieces.add(blackPawn3);allPieces.add(blackPawn4);
         allPieces.add(blackPawn5);allPieces.add(blackPawn6);allPieces.add(blackPawn7);allPieces.add(blackPawn8);
-        
+
         // Add White pieces to List
         allPieces.add(whiteKing);allPieces.add(whiteQueen);allPieces.add(whiteRook1);allPieces.add(whiteRook2);
         allPieces.add(whiteBishop1);allPieces.add(whiteBishop2);allPieces.add(whiteKnight1);allPieces.add(whiteKnight2);
@@ -115,17 +116,7 @@ public class ChessBoard {
 
           board[row][column] = allPieces.get(i);
         }
-//         board[2][0] = blackKing;
-//         blackKing.setCurrentPosition(new int[] {2,0} );
 
-//         board[5][0] = whiteRook1;
-//         whiteRook1.setCurrentPosition(new int[] {5,0} );
-
-//         board[2][5] = whiteRook1;
-//         whiteRook1.setCurrentPosition(new int[] {2,5} );
-
-//        board[5][3] = whiteBishop1;
-//        whiteBishop1.setCurrentPosition(new int[] {5,3} );
     }
 
 

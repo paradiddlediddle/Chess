@@ -5,7 +5,7 @@ import Game.ChessPiece;
 import Game.Game;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 
 public class King extends ChessPiece {
@@ -30,8 +30,8 @@ public class King extends ChessPiece {
         // Check for castling
         checkForCastling(chessBoard, row);
 
-        // Call subtractMoves finally
-        // subtractMovesThatCanBeAttacked(chessBoard);
+        // Call subtractMoves finally, need to work on the implementation
+         subtractMovesThatCanBeAttacked(chessBoard);
 
     }
 
@@ -187,69 +187,115 @@ public class King extends ChessPiece {
         }
     }
 
-
+    // This functions checks if the King can be taken in the next step by any of its opponent pieces
+    // If any of its opponents can take the king after its moved, that particular move is removed from the List.
     private void subtractMovesThatCanBeAttacked (ChessBoard chessBoard) {
 
-        // Storing all the kings moves in a Hashset
-        HashSet<int[]> kingsMoves = new HashSet<>(this.getMove());
-        HashSet<int[]> kingCaptures = new HashSet<>(this.getMoveAndCapture());
+
+        // List to store the kings moves and captures in the form of a string
+        ArrayList<String> kingsMoves = new ArrayList<>();
+        ArrayList<String> kingCaptures = new ArrayList<>();
+
+        // Storing the List of kings moves in an Array List in the form of "Strings"
+        for (int[] array : this.getMove()) {
+            kingsMoves.add(Arrays.toString(array));
+        }
+        for (int[] array : this.getMoveAndCapture()) {
+            kingCaptures.add(Arrays.toString(array));
+        }
+
+
+        //WHY DOES THIS LOOP KEEP REPEATING ITSELF ???
 
         // check for all the pieces which are not null and opposite color
-        for (int i=0; i<8; i++) {
-            for (int j=0; j<8; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
 
                 if (this.getColor() != chessBoard.getBoard()[i][j].getColor()
-                        && chessBoard.getBoard()[i][j].getColor() != Color.NULL ) {
+                        && chessBoard.getBoard()[i][j].getColor() != Color.NULL) {
 
-
+                    //Selects the opponent piece, generate the moves for it and stores it inside a list as strings
                     ChessPiece opponentPiece = chessBoard.getBoard()[i][j];
-
-                    //Generate moves for each opponent piece
-                   opponentPiece.availableMoves(chessBoard, i, j);
-                    List<int []> opponentsMoveList = opponentPiece.getMove();
-
-                    // Just in case / to avoid opponent piece's generated moves from being retained
+                    opponentPiece.availableMoves(chessBoard, i, j);
+                    List<String> opponentsMoveListInString = new ArrayList<>();
 
 
-                    //
+                    // Opponent moves are converted into a string and added to the List
+                    for (int[] array : opponentPiece.getMove()) {
+                        opponentsMoveListInString.add(Arrays.toString(array));
+                    }
+
+
                     for (int k = 0; k < opponentPiece.getMove().size(); k++) {
 
                         // In case if the opponents move is present in the hashset, the kings move / captureMove will get removed
-                       //  kingsMoves.remove(opponentPiece.getMove().get(i));
-                        if (kingsMoves.contains(new int[]{opponentPiece.getMove().get(i)[0], opponentPiece.getMove().get(i)[1]})) {
-                            kingsMoves.remove(new int[]{opponentPiece.getMove().get(i)[0], opponentPiece.getMove().get(i)[1]});
+
+                        if (kingsMoves.contains(opponentsMoveListInString.get(k))) {
+                            kingsMoves.remove(opponentsMoveListInString.get(k));
                         }
 
 
-                       // kingCaptures.remove(opponentPiece.getMove().get(i));
-                        if (kingCaptures.contains(new int[]{opponentPiece.getMove().get(i)[0], opponentPiece.getMove().get(i)[1]})) {
-                            kingCaptures.remove(new int[]{opponentPiece.getMove().get(i)[0], opponentPiece.getMove().get(i)[1]});
+                        if (kingCaptures.contains(opponentsMoveListInString.get(k))) {
+                            kingCaptures.remove(opponentsMoveListInString.get(k));
                         }
+
                     }
+                    // Clears the opponents available moves after checking all the opponent piece moves with king's
                     opponentPiece.clearList();
                 }
             }
         }
 
-        // If the king had moves initially and then doesn't have any moves after subtracting other pieces possible moves, it is a staleMate
+        /**STALE MATE IMPLEMENTATION
+         * If the king had moves initially and then doesn't have any moves after subtracting other pieces possible moves,
+         * it is a staleMate
+         */
+        // If the king at least had one move or one capture
+        if (this.getMove().size() > 0 || this.getMoveAndCapture().size() > 0) {
+            // And doesn't have any after subtracting the opponents move, it is a stale mate
 
-        if (this.getMove().size() > 0 && this.getMoveAndCapture().size() > 0
-                && kingCaptures.size() == 0 && kingsMoves.size() == 0) {
+            if (kingCaptures.size() == 0 && kingsMoves.size() == 0) {
 
-            // StaleMate
-            // How to stop the game?
-            Game.setGameActive(false);
-            Game.setGameResult(Game.Status.STALE_MATE);
-            System.out.println("Stale Mate! No valid moves available");
-            Game.addPlayerMove("Stale Mate! No valid moves available");
+                Game.setGameActive(false);
+                Game.setGameResult(Game.Status.STALE_MATE);
+                Game.addPlayerMove("Match Draw - Stale Mate");
+                System.out.println("Match Draw - Stale Mate!");
+            }
 
         }
 
-        // Clear the kings existing moves list to avoid duplicates
-        this.getMove().clear();
 
-        // Add remaining kings move in the hashset back into the kings actual list
-        for (int [] array : kingsMoves) { this.setMove(array); }
+        // Clears the kings existing moves and "movesAndCaptures" list to avoid duplicates
+        this.clearList();
+
+        // Adding the updated kings move list back
+        for (String array : kingsMoves) {
+
+            //[8, 9] >> 0 = [; 1 = 8; 2 = ,; 3 = " "; 4 = 9; 5 = ];
+            // Hence character 1 and 4 from the string are taken
+            // String to number conversion
+
+            int row = Character.getNumericValue(array.charAt(1));
+            int column = Character.getNumericValue(array.charAt(4));
+
+            this.setMove(new int[]{row, column});
+
+        }
+
+        // Adding back Move and capture list
+
+        for (String array : kingCaptures) {
+
+            //[8, 9] >> 0 = [; 1 = 8; 2 = ,; 3 = " "; 4 = 9; 5 = ];
+            // Hence character 1 and 4 from the string are taken
+            // String to number conversion
+
+            int row = Character.getNumericValue(array.charAt(1));
+            int column = Character.getNumericValue(array.charAt(4));
+
+            this.setMoveAndCapture(new int[]{row, column});
+
+        }
 
     }
 
