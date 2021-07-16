@@ -1,6 +1,7 @@
 package Game;
 
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -122,8 +123,13 @@ private ChessPiece choosePiece (Player player, ChessBoard chessBoard) {
                 }
                 // If the piece is selected, but there are no available moves
                 else {
-                    System.out.println("The selected piece can't be moved, please select another coin.");
-                    continue;
+                    if (gameResult == Status.STALE_MATE) {
+                        break;
+                    }
+                    else {
+                        System.out.println("The selected piece can't be moved, please select another coin.");
+                        continue;
+                    }
                 }
 
 
@@ -253,6 +259,10 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
 
 private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] targetPosition ) {
 
+    /**
+     * At the end of every move, the moves list of the piece is cleared so that the list empty when it is selected next time
+     */
+
     //(move piece needs to handle pawn promotion not king castling)
 
     //1. Move the piece from currentPosition to target position then set the old position to null
@@ -277,29 +287,56 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         addPlayerMove("Check Mate! White wins");
     }
 
+
+
+
     //1.CASTLING
     if (selectedPiece.canCastle() && newColumn == 2 || selectedPiece.canCastle() && newColumn == 6 ) {
 
         //King Moved
         selectedPiece.setUntouchedToFalse(); // King is moved
-        selectedPiece.setCanCastle(false); // can't castle set to false to prevent doing it again
         chessBoard.updateBoardPiece(selectedPiece, newRow, newColumn); // Update the current position of the piece to its new position
         chessBoard.updateBoardPieceToNull(oldRow, oldColumn);// Update the old position to null
         selectedPiece.clearList();
 
-        //Rook Moved
+
 
         //Queen Side
         if (selectedPiece.canCastle() && newColumn == 2){
-            ChessPiece rook = chessBoard.getBoard()[0][0]; // Get rook piece
-            chessBoard.updateBoardPiece(rook, 0, 3); // move rook
-            chessBoard.updateBoardPieceToNull(0,0); // update rooks old position to null
+
+            // White Piece
+            if (selectedPiece.getColor() == ChessPiece.Color.WHITE) {
+                ChessPiece rook = chessBoard.getBoard()[7][0];
+                chessBoard.updateBoardPiece(rook, 7, 3);
+                chessBoard.updateBoardPieceToNull(7,0);
+            }
+
+            else if (selectedPiece.getColor() == ChessPiece.Color.BLACK) {
+                ChessPiece rook = chessBoard.getBoard()[0][0]; // Get rook piece
+                chessBoard.updateBoardPiece(rook, 0, 3); // move rook
+                chessBoard.updateBoardPieceToNull(0,0); // update rooks old position to null
+            }
+            selectedPiece.setCanCastle(false); // can't castle set to false to prevent doing it again
         }
+
         // King Side
         else {
-            ChessPiece rook = chessBoard.getBoard()[0][7]; // Get rook piece
-            chessBoard.updateBoardPiece(rook, 0, 5); // move rook
-            chessBoard.updateBoardPieceToNull(0,7); // update rooks old position to null
+
+            // White Side
+            if (selectedPiece.getColor() == ChessPiece.Color.WHITE) {
+                ChessPiece rook = chessBoard.getBoard()[7][7]; // Get rook piece
+                chessBoard.updateBoardPiece(rook, 7, 5); // move rook
+                chessBoard.updateBoardPieceToNull(7,7); // update rooks old position to null
+            }
+
+            //Black Side
+            else if (selectedPiece.getColor() == ChessPiece.Color.BLACK) {
+                ChessPiece rook = chessBoard.getBoard()[0][7]; // Get rook piece
+                chessBoard.updateBoardPiece(rook, 0, 5); // move rook
+                chessBoard.updateBoardPieceToNull(0,7); // update rooks old position to null
+            }
+
+            selectedPiece.setCanCastle(false); // can't castle set to false to prevent doing it again
         }
 
     }
