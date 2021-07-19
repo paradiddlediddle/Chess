@@ -10,40 +10,23 @@ public class Knight extends ChessPiece {
         super.setTypeOfPiece("Knight");
     }
 
+    /**
+     * There are totally 16 different permutations in which the knight can be moved
+     * However, out of those 16, 8 - permutations land up on the same position even though it travels in a different direction
+     * Since only the possible moves at which the knight can move is required, we don't generate each permutation as its move
+     */
+
     @Override
     public void availableMoves(ChessBoard chessBoard, int row, int column) {
 
-        addIfValidMove(chessBoard, row-2, column+1); // shortRight top
-        addIfValidMove(chessBoard, row+2, column+1); // shortRight bottom
-        addIfValidMove(chessBoard, row-1, column+2); // longRight Top
-        addIfValidMove(chessBoard, row+1, column+2); // longRight bottom
-        addIfValidMove(chessBoard, row-1, column-2); // longLeft top
-        addIfValidMove(chessBoard, row+1, column-2); // longLeft bottom
-        addIfValidMove(chessBoard, row-2, column-1); // shortLeft top
-        addIfValidMove(chessBoard, row+2, column-1); // shortLeft bottom
-    }
-
-    private void addIfValidMove (ChessBoard chessBoard, int row, int column) {
-
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-            return;
-        }
+        search(chessBoard, row+2, column+1, "shortRightBottom",false);
+        search(chessBoard, row-1, column+2, "longRightTop",false);
+        search(chessBoard, row+1, column+2, "longRightBottom",false);
+        search(chessBoard, row-1, column-2, "longLeftTop",false);
+        search(chessBoard, row+1, column-2, "longLeftBottom",false);
+        search(chessBoard, row-2, column-1, "shortLeftTop",false);
+        search(chessBoard, row+2, column-1, "shortLeftBottom",false);
 
     }
-
-
-
-
 
 }

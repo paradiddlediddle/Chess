@@ -31,7 +31,6 @@ public class Pawn extends ChessPiece {
             //Can move 2 Steps only if it is untouched
             if (isUntouched()) {  moveForward(chessBoard, row+2, column); } // 2 Steps
 
-
         }
 
         // white piece moves towards the top of the board
@@ -46,16 +45,23 @@ public class Pawn extends ChessPiece {
 
         }
 
-
-
     }
 
+    /**PAWN MOVEMENT FUNCTIONS
+     *
+     * The pawn can only move towards the opponents side
+     * The pawn can only attack in diagonal
+     * Since the moving and capturing is different for the pawn from the other pieces.
+     * Separate functions are written for moving and capturing the pawn.
+     */
+
+
+    // Just Moves Forward as long as there is an empty spot
     private void moveForward (ChessBoard chessBoard, int row, int column) {
 
         // Base Case: If the row/column is out of bounds or there is anyPiece in front of it.
         if (row < 0 || row > 7 || column < 0 || column > 7 ||
                 chessBoard.getBoard()[row][column].getColor() != Color.NULL  ) { return; }
-
 
         else {
             setMove(new int[] {row, column});
@@ -63,6 +69,7 @@ public class Pawn extends ChessPiece {
 
     }
 
+    // If there are any opponent pieces on the searching row and column it add it to the moveAndCaptures list
     private void diagonalCapture (ChessBoard chessBoard, int row, int column) {
 
         // Base Case: if there is no opposite color pieces on the adjacent side or if there are no pieces at all
@@ -75,22 +82,20 @@ public class Pawn extends ChessPiece {
             // There is an adjacent opposite color piece
             setMoveAndCapture(new int[] {row, column});
         }
-
     }
 
 
-    // ONCE THE USER MOVES THE PAWN TO THE FINAL SPOT, THE PROMOTION SHOULD BE TRIGGERED
-    // Has to be down when the piece is actually moved
-    // Once th Piece is moved to the last row, then provide options.
-    // If the pawn is right before the last piece, just show the last spot as an option,show additional pawn promotion moves only when the user moves it.
-    // Need to implement castling when king is selected
-    // Are row and columns required as a parameter for king castling and pawn promotion?
-    // Start to design actually moving the pieces
-    // Alternate player turns
-    // Initial conditions and statuses for the game
-    // Winning abd draw conditions
-    // Recording of games
 
+    /** PAWN PROMOTION: ONCE THE USER MOVES THE PAWN TO THE FINAL SPOT, THE PROMOTION SHOULD BE TRIGGERED
+     *
+     * The White and black pawn promotion will be triggered by the "move" function in the game class.
+     * Once the user move a pawn to the opponents last row, the pawn promotion functionality is triggered to
+     * promote the pawn to the desired piece.
+     *
+     * Since, the promotion will involve creating a new piece and inserting it on the board. We have two separate functions
+     * for black and white. The respective function will be called by the "move" function in the game class.
+     *
+     */
 
     public void whitePawnPromotion (ChessBoard chessBoard, int row, int column ) {
 
@@ -148,11 +153,5 @@ public class Pawn extends ChessPiece {
 
         chessBoard.updateBoardPiece(promotedPawn, row, column);
     }
-
-
-
-    // Getters and Setters
-
-
 
 }

@@ -1,11 +1,13 @@
 package Game;
 
-
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Scanner;
 
+import static Game.Game.Status.BLACK_FORFEIT;
 
 public class Game {
 
@@ -21,6 +23,8 @@ public class Game {
     private Player player1 = new Player(false);
     private Player player2 = new Player(true);
     private static List<String> playerMoves = new ArrayList<>();
+    private int[] whiteKingPosition = {7,4};
+    private int[] blackKingPosition = {0,4};
 
 
     public Game () {
@@ -72,7 +76,7 @@ private ChessPiece choosePiece (Player player, ChessBoard chessBoard) {
         // If user types "exit"
         if (userPieceSelection.equalsIgnoreCase("exit")) {
             setGameActive(false);
-            if (player.isBlack()) { setGameResult(Status.BLACK_FORFEIT);
+            if (player.isBlack()) { setGameResult(BLACK_FORFEIT);
                 System.out.println("White wins");
                 addPlayerMove("White wins by forfeit!");
             }
@@ -196,7 +200,7 @@ private int[] generateMovesAndGetInput (ChessPiece selectedPiece) {
         // If user types "exit"
         if (userInput.equalsIgnoreCase("exit")) {
             setGameActive(false);
-            if (selectedPiece.isPieceBlack() ) { setGameResult(Status.BLACK_FORFEIT);
+            if (selectedPiece.isPieceBlack() ) { setGameResult(BLACK_FORFEIT);
                 System.out.println("White wins by forfeit!");
                 addPlayerMove("White wins by forfeit");
             }
@@ -287,8 +291,25 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         addPlayerMove("Check Mate! White wins");
     }
 
-
-
+    // IF KING IS BEING MOVED
+    // a) update its position in the globalVariable
+    // b) update the king's "kingIsInCheck" variable to false
+    if(selectedPiece.getNameOnBoard().equalsIgnoreCase("W_K")) {
+        whiteKingPosition = targetPosition;
+        // In case if a king was in check earlier, we need to set it to false when moved
+        // (The only reason why the king was able to move was because it was able to find a move in which no pieces could attack it.
+        // Hence, there is no harm in setting the value to false even if it is already false.
+        selectedPiece.setKingIsInCheck(false);
+    }
+    else if(selectedPiece.getNameOnBoard().equalsIgnoreCase("B_K")) {
+        blackKingPosition = targetPosition;
+        // In case if a king was in check earlier, we need to set it to false when moved
+        // (The only reason why the king was able to move was because it was able to find a move in which no pieces could attack it.
+        // Hence, there is no harm in setting the value to false even if it is already false.
+        selectedPiece.setKingIsInCheck(false);
+    }
+    
+    
 
     //1.CASTLING
     if (selectedPiece.canCastle() && newColumn == 2 || selectedPiece.canCastle() && newColumn == 6 ) {
@@ -367,22 +388,117 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         selectedPiece.clearList();
     }
 
+    // THE PIECE HAS MOVED
 
-    //Black Pawn promotion
+    // functions and conditions that needs to be called after the piece is moved are written below.
+
+    //1. Is King in Check?
+    findIfKingIsInCheck(selectedPiece); // This method will update the kings variable directly
+
+    //2. generate opponent king moves to see if there is a checkMate or stalemate condition
+    generateOpponentKingMoves(selectedPiece);
+
+    //3. a) Black Pawn promotion
     if (selectedPiece.getNameOnBoard().equalsIgnoreCase("B_P") && newRow == 7) {
         selectedPiece.blackPawnPromotion(chessBoard, newRow, newColumn);
     }
 
-    //White Pawn Promotion
+    //3. b)  White Pawn Promotion
     else if (selectedPiece.getNameOnBoard().equalsIgnoreCase("W_P") && newRow == 0) {
         selectedPiece.whitePawnPromotion(chessBoard, newRow, newColumn);
     }
 
 
-
 }
 
-// Convert move into String 
+    /**
+     * This function is called withing the "move" function after the piece is moved
+     *
+     * @param selectedPiece - The piece which just got moved
+     *
+     *  Checks if the piece which got moved can attack the king in its next move
+     *  If it can attack, then it displays a message in the terminal saying "Check"
+     *  and updates the respective king's "kingIsInCheck" variable to true.
+     */
+
+    private void findIfKingIsInCheck (ChessPiece selectedPiece ) {
+        
+       int row = selectedPiece.getCurrentPosition()[0];
+       int column = selectedPiece.getCurrentPosition()[1];
+       
+       selectedPiece.availableMoves(chessBoard, row, column);
+
+       /* There are no chances for other pieces to be selected as the king
+        since the kingPosition array only gets updated when the king piece is moved */
+       
+        for (int i=0; i<selectedPiece.getMoveAndCapture().size(); i++) {
+           
+           //If selected piece is white and can capture the king in its next move
+           if (selectedPiece.getMoveAndCapture().get(i)[0] == blackKingPosition[0] 
+                   && selectedPiece.getMoveAndCapture().get(i)[1] == blackKingPosition[1]) {
+               
+               ChessPiece king = chessBoard.getBoard()[blackKingPosition[0]][blackKingPosition[1]];
+               king.setKingIsInCheck(true);
+               System.out.println("Black king is in check!");
+           }
+           
+           //If selected piece is black and can capture the king in its next move
+
+           else if (selectedPiece.getMoveAndCapture().get(i)[0] == whiteKingPosition[0]
+                    && selectedPiece.getMoveAndCapture().get(i)[1] == whiteKingPosition[1]) {
+
+                ChessPiece king = chessBoard.getBoard()[whiteKingPosition[0]][whiteKingPosition[1]];
+                king.setKingIsInCheck(true);
+                System.out.println("White king is in check!");
+            }
+
+       }
+        
+        // Clear the generated moves of the selected piece so that
+        // when the user selects the piece during next turn a fresh list is generated.
+        // (avoids duplicates since when a piece is selected by the user, "availableMoves" function will be called to generate moves)
+       selectedPiece.clearList();
+    }
+
+    /**
+     * Simply generate moves for the opponent pieces' king piece
+     * If the king had moves and doesn't have moves, the game will stop due to check or stale mate.
+     * If the king had moves, clear the generated moves, we simply call this function to see if the king gets check mated or stale mated.
+     */
+    
+    private void generateOpponentKingMoves (ChessPiece selectedPiece) {
+        
+        // Selected piece is black, check moves for white King
+        if (selectedPiece.isPieceBlack()) {
+            ChessPiece king = chessBoard.getBoard()[whiteKingPosition[0]][whiteKingPosition[1]];
+            //1. Generate kings available move
+            king.availableMoves(chessBoard, whiteKingPosition[0], whiteKingPosition[1] ); //0 - row, 1 - column
+            //2. Clear the generated moves, just in case if the game didn't end to keep List empty.
+            king.clearList();
+        }
+        // Selected piece is white, check moves for black King
+        else  {
+            ChessPiece king = chessBoard.getBoard()[blackKingPosition[0]][blackKingPosition[1]];
+            //1. Generate kings available move
+            king.availableMoves(chessBoard, blackKingPosition[0], blackKingPosition[1] ); //0 - row, 1 - column
+            //2. Clear the generated moves, just in case if the game didn't end to keep List empty.
+            king.clearList();
+        }
+
+    }
+
+
+
+
+
+
+
+    /** Converts moves into readable sentence and adds it to the playerMoves List.
+     * The purpose of this function is to convert the the moves from array into a string
+     * and add it to the player moves list.
+     * This is done so that the entire list of moves played during the game can be exported as a file.
+     */
+
     
     private void addMoveToList (ChessPiece selectedPiece, int[] targetPosition) {
 
@@ -403,10 +519,10 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
     }
 
 
-
-
-
-    // Export data
+    /**
+     * Exports the entire moves made during the game play in the form of a txt file
+     * The date and time at which the game ends will be added as the file name.
+     */
 
     private void exportData () {
 
@@ -430,21 +546,6 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
 
     }
 
-
-    private void checkForStaleMate () {
-
-
-
-        // Generate the kings total moves, a6 b5
-        // Generate the moves for all the opposite colored, !null pieces
-
-        //If the kings' move and the opposite colored pieces moves match, remove the move from kings list of moves
-
-        // If king has no moves, it is a stale mate. (Actually none of the pieces kings side should be able to move)
-        // If king can generate moves but after subtracting has no moves, then it is a stale mate
-
-
-    }
 
 
 

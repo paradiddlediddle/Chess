@@ -10,6 +10,7 @@ import java.util.List;
 
 public class King extends ChessPiece {
 
+
     public King(Color color, String nameOnBoard, int row, int column) {
         super(color, nameOnBoard, row, column);
         super.setTypeOfPiece("King");
@@ -18,178 +19,36 @@ public class King extends ChessPiece {
     @Override
     public void availableMoves(ChessBoard chessBoard, int row, int column) {
 
-        right(chessBoard, row, column+1);
-        left(chessBoard, row, column-1);
-        top (chessBoard, row-1, column);
-        bottom (chessBoard, row+1, column);
-        topRightDiagonal (chessBoard, row-1, column+1);
-        topLeftDiagonal (chessBoard, row-1, column-1);
-        bottomLeftDiagonal (chessBoard, row+1, column-1);
-        bottomRightDiagonal (chessBoard, row +1, column+1);
+        // Searches in all 8 direction to move. KeepSearching is set to "false", since the king just needs to move one step
+        search(chessBoard, row, column + 1, "right", false);
+        search(chessBoard, row, column - 1, "left", false);
+        search(chessBoard, row - 1, column, "top", false);
+        search(chessBoard, row + 1, column, "bottom", false);
+        search(chessBoard, row - 1, column + 1, "topRight", false);
+        search(chessBoard, row - 1, column - 1, "topLeft", false);
+        search(chessBoard, row + 1, column + 1, "bottomRight", false);
+        search(chessBoard, row + 1, column - 1, "bottomLeft", false);
 
         // Check for castling
         checkForCastling(chessBoard, row);
 
         // Call subtractMoves finally, need to work on the implementation
-         subtractMovesThatCanBeAttacked(chessBoard);
-
+        subtractMovesThatCanBeAttacked(chessBoard);
     }
 
 
-    private void right (ChessBoard chessBoard, int row, int column) {
+    /**
+     * Out of the possible positions in which the king can move, if an opponent can attack the king once it is moved
+     * This functions checks if the King can be taken in the next step by any of its opponent pieces
+     * If any of its opponents can take the king after its moved, that particular move is removed from the List.
+     *
+     *
+     * CHECK MATE VS STALE MATE
+     * When the king doesn't have any moves after subtracting the game will end in either check mate or stale mate
+     * if the king is in check, it will be a check mate otherwise it is a stale mate
+     */
 
-        // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    private void left (ChessBoard chessBoard, int row, int column) {
-
-        // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    private void top (ChessBoard chessBoard, int row, int column) {
-
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    private void bottom (ChessBoard chessBoard, int row, int column) {
-
-
-        // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-
-    private void topRightDiagonal (ChessBoard chessBoard, int row, int column) {
-
-
-        // Base Case: If the row/column is out of bounds or if the tile contains a piece of same colour, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-
-    private void topLeftDiagonal (ChessBoard chessBoard, int row, int column) {
-
-
-        // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    private void bottomLeftDiagonal (ChessBoard chessBoard, int row, int column) {
-
-
-
-        // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    private void bottomRightDiagonal (ChessBoard chessBoard, int row, int column) {
-
-
-        // Base Case: If the row/column is out of bounds or finds a same colour piece, return without adding the position into the list of available moves
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
-
-        // If there is an opposite color piece available, we need to add it to the moveAndCapture list and return
-        else if (chessBoard.getBoard()[row][column].getColor() != getColor()
-                && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
-            setMoveAndCapture(new int[] {row, column});
-            return;
-        }
-
-        else {
-            setMove(new int[] {row, column});
-        }
-    }
-
-    // This functions checks if the King can be taken in the next step by any of its opponent pieces
-    // If any of its opponents can take the king after its moved, that particular move is removed from the List.
-    private void subtractMovesThatCanBeAttacked (ChessBoard chessBoard) {
+    private void subtractMovesThatCanBeAttacked(ChessBoard chessBoard) {
 
 
         // List to store the kings moves and captures in the form of a string
@@ -203,9 +62,6 @@ public class King extends ChessPiece {
         for (int[] array : this.getMoveAndCapture()) {
             kingCaptures.add(Arrays.toString(array));
         }
-
-
-        //WHY DOES THIS LOOP KEEP REPEATING ITSELF ???
 
         // check for all the pieces which are not null and opposite color
         for (int i = 0; i < 7; i++) {
@@ -246,23 +102,55 @@ public class King extends ChessPiece {
             }
         }
 
-        /**STALE MATE IMPLEMENTATION
-         * If the king had moves initially and then doesn't have any moves after subtracting other pieces possible moves,
-         * it is a staleMate
-         */
-        // If the king at least had one move or one capture
-        if (this.getMove().size() > 0 || this.getMoveAndCapture().size() > 0) {
-            // And doesn't have any after subtracting the opponents move, it is a stale mate
 
-            if (kingCaptures.size() == 0 && kingsMoves.size() == 0) {
+        // CHECK IF THE KING HAD MOVES BEFORE SUBTRACTING AND DOESN'T HAVE ANY MOVES AFTER SUBTRACTING
 
-                Game.setGameActive(false);
-                Game.setGameResult(Game.Status.STALE_MATE);
-                Game.addPlayerMove("Match Draw - Stale Mate");
-                System.out.println("Match Draw - Stale Mate!");
+            // If the king had at least one move or one capture before subtracting the opponent moves
+            if (this.getMove().size() > 0 || this.getMoveAndCapture().size() > 0) {
+
+                // Doesn't have any move after subtracting
+                if (kingCaptures.size() == 0 && kingsMoves.size() == 0) {
+
+                    // GAME ENDS
+                    // Set the game to false
+                    // Game is going end either by "stale mate" or "check Mate"
+                    Game.setGameActive(false);
+
+
+                    // CHECK MATE IMPLEMENTATION:
+                    // If the king is already in check, it is a checkMate
+
+                    if (this.getKingIsInCheck()) {
+
+                        // Black King taken down
+                        if (this.isPieceBlack()) {
+
+                            Game.setGameResult(Game.Status.WHITE_WIN);
+                            Game.addPlayerMove("Check Mate! - White Wins!");
+                            System.out.println("Check Mate! - White Wins!");
+
+                        }
+                        // White King taken down
+                        else {
+
+                            Game.setGameResult(Game.Status.BLACK_WIN);
+                            Game.addPlayerMove("Check Mate! - Black Wins!");
+                            System.out.println("Check Mate! - Black Wins!");
+
+                        }
+                    }
+
+                    // STALE MATE IMPLEMENTATION
+                    // If the king is not in check, it is a stale mate.
+
+                    else {
+                        Game.setGameResult(Game.Status.STALE_MATE);
+                        Game.addPlayerMove("Stale Mate! - Draw!");
+                        System.out.println("Stale Mate! - Draw!");
+                    }
+
+                }
             }
-
-        }
 
 
         // Clears the kings existing moves and "movesAndCaptures" list to avoid duplicates
@@ -300,29 +188,30 @@ public class King extends ChessPiece {
     }
 
 
+    /**
+     * Only generates the move for castling
+     * Just row is received as a parameter, since the column can't be different if it is untouched.
+     *
+     * @param row - row of the king to determine whether it is a black or white king
+     */
 
-
-    // Only generate the move for castling
-    // Just row is received as a parameter, since the column can't be different if it is untouched.
-    private void checkForCastling (ChessBoard chessBoard, int row) {
+    private void checkForCastling(ChessBoard chessBoard, int row) {
 
         //if the king is untouched, the row and column will be the same, so we can use "row" in the if statement.
         if (isUntouched() && chessBoard.getBoard()[row][0].isUntouched() && chessBoard.getBoard()[row][1].getColor() == Color.NULL
-        && chessBoard.getBoard()[row][2].getColor() == Color.NULL && chessBoard.getBoard()[row][3].getColor() == Color.NULL) {
+                && chessBoard.getBoard()[row][2].getColor() == Color.NULL && chessBoard.getBoard()[row][3].getColor() == Color.NULL) {
 
             // Queen side castling can be done since both the king and queen side rook is untouched
-            this.setMove(new int[] {row, 2});
+            this.setMove(new int[]{row, 2});
             this.setCanCastle(true);
         }
-
-
 
 
         if (isUntouched() && chessBoard.getBoard()[row][7].isUntouched() && chessBoard.getBoard()[row][6].getColor() == Color.NULL
                 && chessBoard.getBoard()[row][5].getColor() == Color.NULL) {
 
             // King side castling can be done since both the king and king side rook is untouched
-            this.setMove(new int[] {row, 6});
+            this.setMove(new int[]{row, 6});
             this.setCanCastle(true);
         }
     }

@@ -60,7 +60,7 @@ public class ChessBoard {
 
     //Creates and adds the null pieces into the List
     private void setNullPieces () {
-        for (int i=2; i<8; i++) {
+        for (int i=2; i<6; i++) {
             for (int j=0; j<8; j++){
                 allPieces.add(new NullPiece(ChessPiece.Color.NULL, "   ", i, j ));
             }
