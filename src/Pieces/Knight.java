@@ -16,16 +16,17 @@ public class Knight extends ChessPiece {
      * Since only the possible moves at which the knight can move is required, we don't generate each permutation as its move
      */
 
-    @Override
-    public void availableMoves(ChessBoard chessBoard, int row, int column) {
 
-        search(chessBoard, row+2, column+1, "shortRightBottom",false);
-        search(chessBoard, row-1, column+2, "longRightTop",false);
-        search(chessBoard, row+1, column+2, "longRightBottom",false);
-        search(chessBoard, row-1, column-2, "longLeftTop",false);
-        search(chessBoard, row+1, column-2, "longLeftBottom",false);
-        search(chessBoard, row-2, column-1, "shortLeftTop",false);
-        search(chessBoard, row+2, column-1, "shortLeftBottom",false);
+    public void availableMoves(ChessBoard chessBoard, int row, int column, boolean kingSearch) {
+
+        search(chessBoard, row-2, column+1, "shortRightTop",false, kingSearch);
+        search(chessBoard, row+2, column+1, "shortRightBottom",false, kingSearch);
+        search(chessBoard, row-1, column+2, "longRightTop",false, kingSearch);
+        search(chessBoard, row+1, column+2, "longRightBottom",false, kingSearch);
+        search(chessBoard, row-1, column-2, "longLeftTop",false, kingSearch);
+        search(chessBoard, row+1, column-2, "longLeftBottom",false, kingSearch);
+        search(chessBoard, row-2, column-1, "shortLeftTop",false, kingSearch);
+        search(chessBoard, row+2, column-1, "shortLeftBottom",false, kingSearch);
 
     }
 

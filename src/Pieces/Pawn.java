@@ -15,8 +15,10 @@ public class Pawn extends ChessPiece {
     }
 
 
-    @Override
-    public void availableMoves(ChessBoard chessBoard, int row, int column) {
+    // The Pawn can attack if the king moves, need to incorporate this
+
+
+    public void availableMoves(ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 
         // check if it is black or a white first
         // then check if it is already moved or not
@@ -24,25 +26,43 @@ public class Pawn extends ChessPiece {
         // black piece moves towards the bottom of the board
         if (isPieceBlack()) {
 
+            if (kingSearch) {
+                diagonalCapture(chessBoard, row+1, column+1, true);
+                diagonalCapture(chessBoard, row+1, column-1, true);
+            }
+            // Normal set of moves
+            else {
+
                 moveForward(chessBoard, row+1, column); // 1 Step
-                diagonalCapture(chessBoard, row+1, column+1); // Bottom right;
-                diagonalCapture(chessBoard, row+1, column-1); // Bottom left;
+                diagonalCapture(chessBoard, row+1, column+1, false); // Bottom right;
+                diagonalCapture(chessBoard, row+1, column-1, false); // Bottom left;
 
-            //Can move 2 Steps only if it is untouched
-            if (isUntouched()) {  moveForward(chessBoard, row+2, column); } // 2 Steps
+                //Can move 2 Steps only if it is untouched
+                if (isUntouched()) {  moveForward(chessBoard, row+2, column); } // 2 Steps
 
+            }
         }
 
         // white piece moves towards the top of the board
         else {
 
-            moveForward(chessBoard, row-1, column); // 1 Step
-            diagonalCapture(chessBoard, row-1, column+1); // Bottom right;
-            diagonalCapture(chessBoard, row-1, column-1); // Bottom left;
+            if (kingSearch) {
 
-            //Can move 2 Steps only if it is untouched
-            if (isUntouched()) {  moveForward(chessBoard, row-2, column); } // 2 Steps
+                diagonalCapture(chessBoard, row-1, column+1, true);
+                diagonalCapture(chessBoard, row-1, column+1, true);
 
+            }
+            // Normal set of moves, (move forward, attack on sides)
+            else{
+
+                moveForward(chessBoard, row-1, column); // 1 Step
+                diagonalCapture(chessBoard, row-1, column+1, false); // Bottom right;
+                diagonalCapture(chessBoard, row-1, column-1, false); // Bottom left;
+
+                //Can move 2 Steps only if it is untouched
+                if (isUntouched()) {  moveForward(chessBoard, row-2, column); } // 2 Steps
+
+            }
         }
 
     }
@@ -70,20 +90,42 @@ public class Pawn extends ChessPiece {
     }
 
     // If there are any opponent pieces on the searching row and column it add it to the moveAndCaptures list
-    private void diagonalCapture (ChessBoard chessBoard, int row, int column) {
+    private void diagonalCapture (ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 
-        // Base Case: if there is no opposite color pieces on the adjacent side or if there are no pieces at all
-        // We can't capture any, so we simply return. (Also considering out of bounds).
-        if (row < 0 || row > 7 || column < 0 || column > 7 ||
-                chessBoard.getBoard()[row][column].getColor() == Color.NULL   ||
-                chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+        if (kingSearch) {
 
-        else {
-            // There is an adjacent opposite color piece
-            setMoveAndCapture(new int[] {row, column});
+            //out of bounds return
+            if (row < 0 || row > 7 || column < 0 || column > 7) {
+                return;
+            }
+            // if (the diagonal side of the pawn is empty or contains a same colored piece, it should be added
+            // to the available list of moves
+            else if ( chessBoard.getBoard()[row][column].getColor() == Color.NULL   ||
+                    chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) {
+
+                setMove(new int[] {row, column});
+                return;
+            }
+
         }
-    }
 
+        // If it is an ordinary search diagonal search
+        else {
+
+            // Base Case: if there is no opposite color pieces on the adjacent side or if there are no pieces at all
+            // We can't capture any, so we simply return. (Also considering out of bounds).
+            if (row < 0 || row > 7 || column < 0 || column > 7 ||
+                    chessBoard.getBoard()[row][column].getColor() == Color.NULL   ||
+                    chessBoard.getBoard()[row][column].isPieceBlack() == isPieceBlack()) { return; }
+
+            else {
+                // There is an adjacent opposite color piece
+                setMoveAndCapture(new int[] {row, column});
+            }
+
+        }
+
+    }
 
 
     /** PAWN PROMOTION: ONCE THE USER MOVES THE PAWN TO THE FINAL SPOT, THE PROMOTION SHOULD BE TRIGGERED

@@ -57,6 +57,9 @@ public class ChessBoard {
     private final Pawn whitePawn7 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,6 );
     private final Pawn whitePawn8 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,7 );
 
+    // Test Pieces
+    // private final King whiteKing2 = new King(ChessPiece.Color.WHITE,"W_K", 4, 2);
+    // private final King blackKing2 = new King(ChessPiece.Color.BLACK,"B_K", 4, 4);
 
     //Creates and adds the null pieces into the List
     private void setNullPieces () {
@@ -65,6 +68,7 @@ public class ChessBoard {
                 allPieces.add(new NullPiece(ChessPiece.Color.NULL, "   ", i, j ));
             }
         }
+
     }
 
 
@@ -116,6 +120,8 @@ public class ChessBoard {
 
           board[row][column] = allPieces.get(i);
         }
+       // board[4][2] = blackKing2;
+      //  board[4][4] = whiteKing2;
 
     }
 

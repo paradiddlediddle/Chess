@@ -15,13 +15,12 @@ public class Rook extends ChessPiece {
      */
 
 
-    @Override
-    public void availableMoves (ChessBoard chessBoard, int row, int column) {
+    public void availableMoves (ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 
-        search(chessBoard, row, column+1, "right", true);
-        search(chessBoard, row, column-1, "left", true);
-        search(chessBoard, row -1, column, "top", true);
-        search(chessBoard, row +1, column, "bottom", true);
+        search(chessBoard, row, column+1, "right", true, kingSearch);
+        search(chessBoard, row, column-1, "left", true, kingSearch);
+        search(chessBoard, row -1, column, "top", true, kingSearch);
+        search(chessBoard, row +1, column, "bottom", true, kingSearch);
 
     }
 

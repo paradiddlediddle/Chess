@@ -18,12 +18,12 @@ public class Bishop extends ChessPiece {
     
 
     // Override
-    public void availableMoves (ChessBoard chessBoard, int row, int column ) {
+    public void availableMoves (ChessBoard chessBoard, int row, int column, boolean kingSearch ) {
 
-        search(chessBoard, row - 1, column +1, "topRight", true);
-        search(chessBoard, row -1, column -1, "topLeft", true);
-        search(chessBoard, row +1, column +1, "bottomRight", true);
-        search(chessBoard, row +1, column -1, "bottomLeft", true);
+        search(chessBoard, row - 1, column +1, "topRight", true, false);
+        search(chessBoard, row -1, column -1, "topLeft", true, false);
+        search(chessBoard, row +1, column +1, "bottomRight", true, false);
+        search(chessBoard, row +1, column -1, "bottomLeft", true, false);
 
     }
 

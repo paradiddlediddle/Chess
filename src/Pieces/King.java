@@ -16,24 +16,24 @@ public class King extends ChessPiece {
         super.setTypeOfPiece("King");
     }
 
-    @Override
-    public void availableMoves(ChessBoard chessBoard, int row, int column) {
+
+    public void availableMoves(ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 
         // Searches in all 8 direction to move. KeepSearching is set to "false", since the king just needs to move one step
-        search(chessBoard, row, column + 1, "right", false);
-        search(chessBoard, row, column - 1, "left", false);
-        search(chessBoard, row - 1, column, "top", false);
-        search(chessBoard, row + 1, column, "bottom", false);
-        search(chessBoard, row - 1, column + 1, "topRight", false);
-        search(chessBoard, row - 1, column - 1, "topLeft", false);
-        search(chessBoard, row + 1, column + 1, "bottomRight", false);
-        search(chessBoard, row + 1, column - 1, "bottomLeft", false);
+        search(chessBoard, row, column + 1, "right", false, kingSearch);
+        search(chessBoard, row, column - 1, "left", false, kingSearch);
+        search(chessBoard, row - 1, column, "top", false, kingSearch);
+        search(chessBoard, row + 1, column, "bottom", false, kingSearch);
+        search(chessBoard, row - 1, column + 1, "topRight", false, kingSearch);
+        search(chessBoard, row - 1, column - 1, "topLeft", false, kingSearch);
+        search(chessBoard, row + 1, column + 1, "bottomRight", false, kingSearch);
+        search(chessBoard, row + 1, column - 1, "bottomLeft", false, kingSearch);
 
         // Check for castling
         checkForCastling(chessBoard, row);
 
         // Call subtractMoves finally, need to work on the implementation
-        subtractMovesThatCanBeAttacked(chessBoard);
+       if (!kingSearch) { subtractMovesThatCanBeAttacked(chessBoard);}
     }
 
 
@@ -64,15 +64,22 @@ public class King extends ChessPiece {
         }
 
         // check for all the pieces which are not null and opposite color
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
 
                 if (this.getColor() != chessBoard.getBoard()[i][j].getColor()
                         && chessBoard.getBoard()[i][j].getColor() != Color.NULL) {
 
                     //Selects the opponent piece, generate the moves for it and stores it inside a list as strings
                     ChessPiece opponentPiece = chessBoard.getBoard()[i][j];
-                    opponentPiece.availableMoves(chessBoard, i, j);
+
+                    // Is the opponent piece a king we should just generate the opponent kings moves without excluding the vulnerable positions.
+                    // Since excluding vulnerable positions would require the king to generate other pieces moves, if two kings come across each other
+                    // They will keep generating moves for each other.
+                    opponentPiece.availableMoves(chessBoard, i, j, true);
+                    // else if pawn call a separate function
+
+
                     List<String> opponentsMoveListInString = new ArrayList<>();
 
 
@@ -90,7 +97,6 @@ public class King extends ChessPiece {
                             kingsMoves.remove(opponentsMoveListInString.get(k));
                         }
 
-
                         if (kingCaptures.contains(opponentsMoveListInString.get(k))) {
                             kingCaptures.remove(opponentsMoveListInString.get(k));
                         }
@@ -101,7 +107,6 @@ public class King extends ChessPiece {
                 }
             }
         }
-
 
         // CHECK IF THE KING HAD MOVES BEFORE SUBTRACTING AND DOESN'T HAVE ANY MOVES AFTER SUBTRACTING
 
@@ -170,7 +175,7 @@ public class King extends ChessPiece {
 
         }
 
-        // Adding back Move and capture list
+        // Adding back the updated moveAndCapture list
 
         for (String array : kingCaptures) {
 
@@ -215,6 +220,7 @@ public class King extends ChessPiece {
             this.setCanCastle(true);
         }
     }
+
 
 
 }

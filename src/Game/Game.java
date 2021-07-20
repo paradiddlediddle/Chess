@@ -38,9 +38,7 @@ public class Game {
           }
 
         }
-
     }
-
 
 public void playerMove (Player player, ChessBoard chessBoard) {
 
@@ -118,7 +116,7 @@ private ChessPiece choosePiece (Player player, ChessBoard chessBoard) {
                 }
 
                 // need to generate moves for the selected piece and see if it is valid
-                selectedPiece.availableMoves(chessBoard, selectedPiece.getCurrentPosition()[0], selectedPiece.getCurrentPosition()[1]);
+                selectedPiece.availableMoves(chessBoard, selectedPiece.getCurrentPosition()[0], selectedPiece.getCurrentPosition()[1], false);
 
                 // Selected piece has moves, (Only exit during this condition.)
                 if (selectedPiece.getMove().size() >= 1 || selectedPiece.getMoveAndCapture().size() >= 1) {
@@ -426,7 +424,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
        int row = selectedPiece.getCurrentPosition()[0];
        int column = selectedPiece.getCurrentPosition()[1];
        
-       selectedPiece.availableMoves(chessBoard, row, column);
+       selectedPiece.availableMoves(chessBoard, row, column, false);
 
        /* There are no chances for other pieces to be selected as the king
         since the kingPosition array only gets updated when the king piece is moved */
@@ -472,7 +470,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         if (selectedPiece.isPieceBlack()) {
             ChessPiece king = chessBoard.getBoard()[whiteKingPosition[0]][whiteKingPosition[1]];
             //1. Generate kings available move
-            king.availableMoves(chessBoard, whiteKingPosition[0], whiteKingPosition[1] ); //0 - row, 1 - column
+            king.availableMoves(chessBoard, whiteKingPosition[0], whiteKingPosition[1],false); //0 - row, 1 - column
             //2. Clear the generated moves, just in case if the game didn't end to keep List empty.
             king.clearList();
         }
@@ -480,7 +478,7 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         else  {
             ChessPiece king = chessBoard.getBoard()[blackKingPosition[0]][blackKingPosition[1]];
             //1. Generate kings available move
-            king.availableMoves(chessBoard, blackKingPosition[0], blackKingPosition[1] ); //0 - row, 1 - column
+            king.availableMoves(chessBoard, blackKingPosition[0], blackKingPosition[1], false); //0 - row, 1 - column
             //2. Clear the generated moves, just in case if the game didn't end to keep List empty.
             king.clearList();
         }

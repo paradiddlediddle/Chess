@@ -43,7 +43,7 @@ public abstract class ChessPiece {
      * @param column - current row in which the piece is located on the board
      */
 
-    public void availableMoves (ChessBoard chessBoard, int row, int column) {
+    public void availableMoves (ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 
         // will determine how the piece moves
         // Conditions:
@@ -71,7 +71,6 @@ public abstract class ChessPiece {
    }
 
 
-
 // MOVE FUNCTIONS:
 
     /** SEARCH FUNCTION:
@@ -91,16 +90,49 @@ public abstract class ChessPiece {
      * because, it will search the tile and see if a move can be generated / or a piece can be captured / or if the search is
      * out of bounds.
      *
+     * @param kingsSearch - A boolean value which helps to find whether the search is done for finding kings vulnerable moves
+     *
+     *       if the kingSearch is "TRUE": when the moves are generated for an opponent piece,
+     *       if it encounters a same colored piece along its path, it will also count the the same colored piece's spot
+     *       as a move to which it can travel.
+     *
+     *       When the generating the opponent moves, every piece except for the king and pawn will use this same search function
+     *       with the kingSearch argument as true.
+     *       Since pawn attacks diagonally and king will check for other pieces' moves (in case if a king comes across
+     *       another king it will cause an endless loop). So for pawn and King separate king's search functions are written
+     *
+     *       Note:
+     *       This is done so that the king doesn't capture an opponent piece forcing itself into "Check Mate".
+     *       Since the king will deliberately place itself in a "check" scenario by the end of its move AND
+     *       it will be the opponents chance to move his piece, so it will be "CheckMate" by de facto.
      */
 
-    public void search (ChessBoard chessBoard, int row, int column, String direction, boolean keepSearching ) {
+    public void search (ChessBoard chessBoard, int row, int column, String direction, boolean keepSearching, boolean kingsSearch ) {
         
         
-        //If out of bounds or same color piece found, returns without doing anything
-        if (row < 0 || row > 7 || column < 0 || column > 7  ||
-                chessBoard.getBoard()[row][column].getColor() == getColor()) { return; }
+        //If out of bounds, return without doing anything
+        if (row < 0 || row > 7 || column < 0 || column > 7 ) { return; }
 
-        //else if opposite color piece available, adds it to the moveAndCapture list
+        //SAME COLOR PIECE ENCOUNTERED
+        else if (chessBoard.getBoard()[row][column].getColor() == getColor()) {
+
+            // If the search is called by a king piece to avoid moving into vulnerable positions, the spot of a same
+            // colored piece will also be considered as a move.
+            // So, instead of just returning it will add the same colored piece's spot as a move and return
+            if (kingsSearch) {
+                setMove(new int[] {row, column});
+                return;
+            }
+
+            // If it is just a regular search, i.e kingSearch = false.
+            else {
+                return;
+            }
+
+        }
+
+        //OPPOSITE COLORED PIECE IS ENCOUNTERED
+        //adds it to the moveAndCapture list and returns
         else if (chessBoard.getBoard()[row][column].getColor() != getColor()
                 && chessBoard.getBoard()[row][column].getColor() != Color.NULL){
             setMoveAndCapture(new int[] {row, column});
@@ -117,19 +149,17 @@ public abstract class ChessPiece {
                 
                 switch (direction) {
 
-                    case "right": search(chessBoard, row, column +1, direction, keepSearching); break;
-                    case "left" : search(chessBoard, row, column -1, direction, keepSearching); break;
-                    case "top"  : search(chessBoard, row -1, column, direction, keepSearching); break;
-                    case "bottom": search(chessBoard, row +1, column, direction, keepSearching); break;
-                    case "topRight": search(chessBoard,row -1, column +1, direction, keepSearching); break;
-                    case "topLeft": search(chessBoard, row -1, column -1, direction, keepSearching); break;
-                    case "bottomRight": search(chessBoard, row +1, column+1, direction, keepSearching); break;
-                    case "bottomLeft": search(chessBoard, row +1, column-1, direction, keepSearching); break;
+                    case "right": search(chessBoard, row, column +1, direction, keepSearching, kingsSearch); break;
+                    case "left" : search(chessBoard, row, column -1, direction, keepSearching, kingsSearch); break;
+                    case "top"  : search(chessBoard, row -1, column, direction, keepSearching, kingsSearch); break;
+                    case "bottom": search(chessBoard, row +1, column, direction, keepSearching, kingsSearch); break;
+                    case "topRight": search(chessBoard,row -1, column +1, direction, keepSearching, kingsSearch); break;
+                    case "topLeft": search(chessBoard, row -1, column -1, direction, keepSearching, kingsSearch); break;
+                    case "bottomRight": search(chessBoard, row +1, column+1, direction, keepSearching, kingsSearch); break;
+                    case "bottomLeft": search(chessBoard, row +1, column-1, direction, keepSearching, kingsSearch); break;
 
                 }
-
             }
-            
         }
     }
 
