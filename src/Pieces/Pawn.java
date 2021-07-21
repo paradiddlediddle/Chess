@@ -89,6 +89,17 @@ public class Pawn extends ChessPiece {
 
     }
 
+    /**DIAGONAL CAPTURE:
+     * The function works differently with kingSearch argument set to "True" and "False".
+     * If the argument is set as true. The the function will determine if a piece can move diagonally and add it to its moves
+     * In case if a same colored piece is present on its diagonal, it will try to add that spot to its moves List.
+     *
+     * If the king search argument is set to false it will only use this move to find if it can attack
+     * an opposite colored piece and add it to its list of "moveAndCapture" List.
+     */
+
+
+
     // If there are any opponent pieces on the searching row and column it add it to the moveAndCaptures list
     private void diagonalCapture (ChessBoard chessBoard, int row, int column, boolean kingSearch) {
 

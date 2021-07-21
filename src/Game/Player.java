@@ -2,6 +2,10 @@ package Game;
 
 public class Player {
 
+    // Player class represents the color of the player's piece.
+    // Player number 1 or number 2
+
+
     private boolean isBlack;
     private int playerNumber;
 

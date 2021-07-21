@@ -194,7 +194,8 @@ public class King extends ChessPiece {
 
 
     /**
-     * Only generates the move for castling
+     * Only generates the move for castling, doesn't actually move the piece. The actual move is
+     * done in the "movePiece" function in the game class.
      * Just row is received as a parameter, since the column can't be different if it is untouched.
      *
      * @param row - row of the king to determine whether it is a black or white king
