@@ -22,7 +22,7 @@ public class Game {
     private ChessBoard chessBoard = new ChessBoard();
     private Player player1 = new Player(false);
     private Player player2 = new Player(true);
-    private static List<String> playerMoves = new ArrayList<>();
+    private final static List<String> playerMoves = new ArrayList<>();
     private int[] whiteKingPosition = {7,4};
     private int[] blackKingPosition = {0,4};
 
@@ -55,7 +55,6 @@ public class Game {
 public void playerMove (Player player, ChessBoard chessBoard) {
 
     int[] newPosition = null;
-    String playerMove = null;
     ChessPiece userSelectedPiece = choosePiece(player, chessBoard);
     // If statements are added so that the game doesn't stop when the game is exited.
    if (isGameActive()){ newPosition = generateMovesAndGetInput(userSelectedPiece); }
@@ -603,7 +602,6 @@ private void movePiece ( ChessBoard chessBoard, ChessPiece selectedPiece, int[] 
         catch (Exception exception ){ System.out.println(exception); }
 
         //Create File
-
         for (int i=0; i<getPlayerMoves().size(); i++) {
             recordingFile.format("%s %d %s %n", "Move", i ,": " + getPlayerMoves().get(i) + " ");
         }

@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ChessBoard {
 
-    private ChessPiece[][] board = new ChessPiece[8][8];
-    private List<ChessPiece> allPieces = new ArrayList<>();
+    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private final List<ChessPiece> allPieces = new ArrayList<>();
 
 
     public ChessBoard () {
@@ -57,10 +57,9 @@ public class ChessBoard {
     private final Pawn whitePawn7 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,6 );
     private final Pawn whitePawn8 = new Pawn(ChessPiece.Color.WHITE,"W_P",6,7 );
 
-    // Test Pieces
-    // private final King whiteKing2 = new King(ChessPiece.Color.WHITE,"W_K", 4, 2);
-    // private final King blackKing2 = new King(ChessPiece.Color.BLACK,"B_K", 4, 4);
 
+    // The board is set with null pieces at first to represent an empty spot on the board
+    // It doesn't matter if we fill the entire board with null pieces or just the row 2 to 6 with mull pieces.
     //Creates and adds the null pieces into the List
     private void setNullPieces () {
         for (int i=2; i<6; i++) {
@@ -80,10 +79,6 @@ public class ChessBoard {
     public void updateBoardPiece (ChessPiece chessPiece, int row,  int column) { this.board[row][column] = chessPiece; }
 
     public void updateBoardPieceToNull(int row, int column) { this.board[row][column] =  new NullPiece(ChessPiece.Color.NULL, "   ", row, column );   }
-
-    public List<ChessPiece> getAllPieces() { return allPieces; }
-
-    public void setAllPieces(List<ChessPiece> allPieces) { this.allPieces = allPieces; }
 
 
 
@@ -105,7 +100,7 @@ public class ChessBoard {
     }
 
 
-    // Arranging the pieces in the board
+    // Arranging just the black and white pieces on the board
     private void arrangePieces () {
 
         // Adding pieces to the list
@@ -113,15 +108,15 @@ public class ChessBoard {
         setNullPieces();
 
         //Iterates through the list and gets the current position and
-        for (int i=0; i < allPieces.size(); i++) {
-          int row =  allPieces.get(i).getCurrentPosition()[0];
-          int column = allPieces.get(i).getCurrentPosition()[1];
+        for (ChessPiece eachPieceOnBoard: allPieces) {
+            //
+          //We simply iterate through each piece on the board and get its current location
 
+          int row =  eachPieceOnBoard.getCurrentPosition()[0];
+          int column = eachPieceOnBoard.getCurrentPosition()[1];
 
-          board[row][column] = allPieces.get(i);
+          board[row][column] = eachPieceOnBoard;
         }
-       // board[4][2] = blackKing2;
-      //  board[4][4] = whiteKing2;
 
     }
 

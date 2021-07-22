@@ -10,16 +10,17 @@ public abstract class ChessPiece {
     private boolean kingIsInCheck;
     private String typeOfPiece;
     private boolean isUntouched = true;
-    private String nameOnBoard;
+    private final String nameOnBoard;
     private Color color;
-    private boolean pieceIsBlack;
+    private final boolean pieceIsBlack;
     private boolean onTheBoard;
     private boolean canCastle = false;
     private int [] currentPosition = new int[2];
 
     // move and moveAndCapture will contain a list of possible moves that can be performed by the piece
-    private List<int[]> move = new ArrayList<>();
-    private List<int[]> moveAndCapture = new ArrayList<>();
+    // We can still modify the list even if it is set as final. We simply can't re assign its reference i.e (move = new ArrayList<>("something"))
+    private final List<int[]> move = new ArrayList<>();
+    private final List<int[]> moveAndCapture = new ArrayList<>();
 
     // Constructor
     public ChessPiece (Color color, String nameOnBoard, int row, int column) {
@@ -38,7 +39,7 @@ public abstract class ChessPiece {
     /** AVAILABLE MOVES
      * The available moves is overridden by each piece class separately since the moves of each and every piece vary.
      *
-     * @param chessBoard
+
      * @param row - current row in which the piece is located on the board
      * @param column - current row in which the piece is located on the board
      */
@@ -79,7 +80,6 @@ public abstract class ChessPiece {
      * has to be passed as "row" and "column", even though it receives a parameter called as "direction".
      * The direction parameter is to help the function determine the direction at which the recursive call needs to take place.
      *
-     * @param chessBoard
      * @param row - row on which the search needs to be performed
      * @param column - column on which the search needs to be performed
      * @param direction - direction at which the recursive call needs to search
@@ -121,7 +121,6 @@ public abstract class ChessPiece {
             // So, instead of just returning it will add the same colored piece's spot as a move and return
             if (kingsSearch) {
                 setMove(new int[] {row, column});
-                return;
             }
 
             // If it is just a regular search, i.e kingSearch = false.
@@ -149,14 +148,14 @@ public abstract class ChessPiece {
                 
                 switch (direction) {
 
-                    case "right": search(chessBoard, row, column +1, direction, keepSearching, kingsSearch); break;
-                    case "left" : search(chessBoard, row, column -1, direction, keepSearching, kingsSearch); break;
-                    case "top"  : search(chessBoard, row -1, column, direction, keepSearching, kingsSearch); break;
-                    case "bottom": search(chessBoard, row +1, column, direction, keepSearching, kingsSearch); break;
-                    case "topRight": search(chessBoard,row -1, column +1, direction, keepSearching, kingsSearch); break;
-                    case "topLeft": search(chessBoard, row -1, column -1, direction, keepSearching, kingsSearch); break;
-                    case "bottomRight": search(chessBoard, row +1, column+1, direction, keepSearching, kingsSearch); break;
-                    case "bottomLeft": search(chessBoard, row +1, column-1, direction, keepSearching, kingsSearch); break;
+                    case "right": search(chessBoard, row, column +1, direction, true, kingsSearch); break;
+                    case "left" : search(chessBoard, row, column -1, direction, true, kingsSearch); break;
+                    case "top"  : search(chessBoard, row -1, column, direction, true, kingsSearch); break;
+                    case "bottom": search(chessBoard, row +1, column, direction, true, kingsSearch); break;
+                    case "topRight": search(chessBoard,row -1, column +1, direction, true, kingsSearch); break;
+                    case "topLeft": search(chessBoard, row -1, column -1, direction, true, kingsSearch); break;
+                    case "bottomRight": search(chessBoard, row +1, column+1, direction, true, kingsSearch); break;
+                    case "bottomLeft": search(chessBoard, row +1, column-1, direction, true, kingsSearch); break;
 
                 }
             }
@@ -172,11 +171,7 @@ public abstract class ChessPiece {
     public void setColor(Color color) { this.color = color; }
 
     public boolean isPieceBlack() { return pieceIsBlack; }
-
-    public void setBlack(boolean black) { pieceIsBlack = black; }
-
-    public boolean isOnTheBoard() { return onTheBoard; }
-
+    
     public void setOnTheBoard(boolean onTheBoard) { this.onTheBoard = onTheBoard; }
 
     public int[] getCurrentPosition() { return currentPosition; }
@@ -192,8 +187,6 @@ public abstract class ChessPiece {
     public void setMoveAndCapture(int[] position) { moveAndCapture.add(position); }
 
     public String getNameOnBoard() { return nameOnBoard; }
-
-    public void setNameOnBoard(String nameOnBoard) { this.nameOnBoard = nameOnBoard; }
 
     public boolean isUntouched() { return isUntouched; }
 
